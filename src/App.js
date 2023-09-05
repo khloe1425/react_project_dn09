@@ -1,23 +1,27 @@
 import logo from './logo.svg';
 import './App.css';
+import HeaderRCC from './Components/HeaderRCC';
+import CardProduct from './Components/CardProduct';
+import HomeComponent from './Components/BTComponent/HomeComponent';
+import CardComponent from './Components/DataBinding/CardComponent';
 
+// App : component chính, component cha, chứa các component con
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="App container">
+      
+      <CardComponent/>
+      {/* <HeaderRCC />
+      <div className="row">
+
+        <CardProduct />
+        <CardProduct />
+        <CardProduct />
+        <CardProduct />
+
+      </div> */}
+        {/* <HomeComponent/> */}
+        
     </div>
   );
 }
