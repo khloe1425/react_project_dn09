@@ -23,8 +23,12 @@ export default class ChangeColorHouse extends Component {
         bgColor: color,
       });
     };
+
+
   };
 
+  //! render chạy 1 lần khi load trang
+  //! Muốn gọi lại hàm render => load giá trị mới vừa thay đổi lên UI => gọi thông qua quy định của State
   render() {
     return (
       <div>
@@ -72,3 +76,18 @@ export default class ChangeColorHouse extends Component {
     );
   }
 }
+
+
+/**
+ * ES6
+ * 
+ */
+// login(){
+//   //Đăng nhập thành công 
+//   hienThiUserName() ; gọi lại hàm
+// }
+
+// //render();
+// hienThiUserName(){
+
+// }

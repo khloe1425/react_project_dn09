@@ -9,12 +9,14 @@ import StyleComponent2 from "./Components/Style/StyleComponent2";
 import StateComponent from "./Components/StateComponent/StateComponent";
 import FontSize from "./Components/StateComponent/FontSize";
 import ChangeColorHouse from "./Components/StateComponent/ChangeColorHouse";
+import XemChiTietSP from "./Components/Props/XemChiTietSP";
 
 // App : component chính, component cha, chứa các component con
 function App() {
   return (
     <div className="App container">
-      <ChangeColorHouse />
+      <XemChiTietSP/>
+      {/* <ChangeColorHouse /> */}
       {/* <FontSize /> */}
       {/* <StateComponent /> */}
       {/* <StyleComponent /> */}
