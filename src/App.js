@@ -10,29 +10,16 @@ import StateComponent from "./Components/StateComponent/StateComponent";
 import FontSize from "./Components/StateComponent/FontSize";
 import ChangeColorHouse from "./Components/StateComponent/ChangeColorHouse";
 import XemChiTietSP from "./Components/Props/XemChiTietSP";
+import BTGioHang from "./Components/BTGioHang/BTGioHang";
 
 // App : component chính, component cha, chứa các component con
 function App() {
   return (
     <div className="App container">
-      <XemChiTietSP/>
-      {/* <ChangeColorHouse /> */}
-      {/* <FontSize /> */}
-      {/* <StateComponent /> */}
-      {/* <StyleComponent /> */}
-      {/* <StyleComponent2 /> */}
-
-      {/* <CardComponent/> */}
-      {/* <HeaderRCC />
-      <div className="row">
-
-        <CardProduct />
-        <CardProduct />
-        <CardProduct />
-        <CardProduct />
-
-      </div> */}
-      {/* <HomeComponent/> */}
+      <BTGioHang/>
+      
+      {/* <XemChiTietSP/> */}
+     
     </div>
   );
 }
