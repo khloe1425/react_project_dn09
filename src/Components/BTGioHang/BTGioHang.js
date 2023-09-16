@@ -1,4 +1,6 @@
 import React, { Component, Fragment } from 'react'
+import ProductListCart from './ProductListCart'
+import Cart from './Cart'
 
 export default class BTGioHang extends Component {
 
@@ -125,39 +127,119 @@ export default class BTGioHang extends Component {
         }
     ]
 
+    // Khai bao state can xet 2 dk 
     state = {
-        productCart: [
-            {
-                id: 1,
-                name: "Adidas Prophere",
-                price: 350,
-                image: "http://svcy3.myclass.vn/images/adidas-prophere.png",
-                soLuong: 1
-            }
-        ]
+        productCart: []
     }
 
-    showProductList = () => {
-        //trả mảng mới ra khỏi hàm showProductList
-        return this.productList.map((product) => {
-            let { image, name, price } = product;
+    //thêm sp và giỏ hàng => setState() 
+    //Thỏa 2 đk để khai báo hàm gọi setState 
+    addToCart = (product) => {
+        // console.log(product);
+        let { id, name, price, image } = product;
+        //gọi setState
+        let spGH = {
+            id: id,
+            name: name,
+            price: price,
+            image: image,
+            soLuong: 1
+        }
+        console.log(spGH);
+        //giữ lại các sản phẩm đang có của giỏ hàng và thêm được sản phẩm mới
+        //copy mảng cũ  
+        //let function scope
+        let productCartUpdate = [...this.state.productCart];
 
-            // trả về mảng mới chứa các obj thẻ col-3
-            return <div className="col-3 mt-3">
-                <div className="card">
-                    <img src={image} className="card-img-top" alt="..." />
-                    <div className="card-body">
-                        <h5 className="card-title">{name}</h5>
-                        <p className="card-text">${price}</p>
-                        <button data-toggle="modal" data-target="#exampleModal" className="btn btn-primary">Add to cart</button>
-                    </div>
-                </div>
-            </div>
+        // tìm sp đã có trong giỏ hàng ko?
+        let spFind = this.state.productCart.find((proCart) => {
+            return proCart.id === spGH.id
         })
+        console.log(spFind);
+        if (spFind) {
+            //tìm thấy => tăng số lượng của sản phẩm đã có trong giỏ hàng
+            // spFind.soLuong = spFind.soLuong + 1;
+            spFind.soLuong += 1
+        } else {
+            //let phạm vi block scope 
+            // let productCartUpdate = [...this.state.productCart, spGH];
+
+            //thêm phần tử mới vào mảng
+            productCartUpdate.push(spGH);
+        }
+
+        console.log(productCartUpdate);
+
+        this.setState({
+            productCart: productCartUpdate
+        })
+
     }
+
+
+    deleteCart = (proID) => {
+        console.log(proID);
+        //mảng mới
+        let productCartUpdate = [...this.state.productCart]
+        //index
+        // let index = productCartUpdate.findIndex((proCart) => { 
+        //     return proCart.id === proID
+        //  })
+
+        let index = productCartUpdate.findIndex(proCart => proCart.id === proID)
+        // splice 
+        if(index > -1){
+            productCartUpdate.splice(index,1);
+        }
+
+        this.setState({
+            productCart: productCartUpdate
+        })
+
+    }
+
+    //sl => nếu cần tăng => truyền 1
+    // Nếu muốn giảm => truyền -1
+    updateSoLuong = (proID, sl) => { 
+        console.log(proID);
+
+        let spFind = this.state.productCart.find(proCart => proCart.id === proID )
+        
+        if(spFind){
+            // tìm thấy thì thay đổi soLuong
+            //spFind.soLuong = spFind.soLuong  + sl
+            // spFind.soLuong = spFind.soLuong  + -1
+            spFind.soLuong += sl;
+
+            if( spFind.soLuong < 1){
+                alert("số lượng không hợp lệ")
+                spFind.soLuong = 1;
+            }
+        }
+        //gọi setState
+
+        this.setState({
+            productCart: this.state.productCart
+        });
+
+     }
+
+
+     sumProCart = () => { 
+        let tongSL = 0;
+            //duyệt mảng giỏ hàng
+
+                //cộng số lượng sp của giỏ hàng vào tongSL
+            
+            
+        return tongSL;
+
+      }
+
 
     render() {
-        let {id,name,price,soLuong,image} = this.state.productCart[0];
+
+
         return (
             <Fragment>
                 <div className="row">
@@ -165,75 +247,14 @@ export default class BTGioHang extends Component {
                         <h2>Bài tập giỏ hàng</h2>
                     </div>
                     <div className="col-3">
-                        <p data-toggle="modal" data-target="#exampleModal" className='text-danger'>Giỏ hàng (0)</p>
+                        <p data-toggle="modal" data-target="#exampleModal" className='text-danger'>Giỏ hàng ({this.sumProCart()})</p>
                     </div>
                 </div>
-                <div className="row">
-                    {/* Gọi hàm hiển thị danh sách */}
-                    {this.showProductList()}
-                </div>
 
+                {/* Hien thi danh sach san pham */}
+                <ProductListCart addToCart={this.addToCart} productList={this.productList} />
 
-                <div className="modal fade" id="exampleModal" tabIndex={-1} aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div className="modal-dialog modal-lg">
-                        <div className="modal-content">
-                            <div className="modal-header">
-                                <h5 className="modal-title" id="exampleModalLabel">Giỏ hàng</h5>
-                                <button type="button" className="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">×</span>
-                                </button>
-                            </div>
-                            <div className="modal-body">
-
-                                <table className="table">
-                                    <thead>
-                                        <tr>
-                                            <th scope="col">Mã</th>
-                                            <th scope="col">Hình</th>
-                                            <th scope="col">Tên</th>
-                                            <th scope="col">Số lượng</th>
-                                            <th scope="col">Đơn giá</th>
-                                            <th scope="col">Thành tiền</th>
-                                            <th></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>{id}</td>
-                                            <td>
-                                                <img style={{ width: "50px" }} src={image} alt="" />
-                                            </td>
-                                            <td>
-                                                {name}
-                                            </td>
-                                            <td>
-                                                <button className='btn btn-success'>+</button>
-                                                <span style={{ padding: "10px" }}>{soLuong}</span>
-                                                <button className='btn btn-success'>-</button>
-                                            </td>
-                                            <td>
-                                                {price}
-                                            </td>
-                                            {/* các data có thể tính toán từ data có sẵn không cần lưu trữ vào đối tượng */}
-                                            <td>
-                                                {price * soLuong}
-                                            </td>
-                                            <td>
-                                                <button className='btn btn-danger'>Xóa</button>
-                                            </td>
-                                        </tr>
-
-                                    </tbody>
-                                </table>
-
-
-                            </div>
-                            <div className="modal-footer">
-                                <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <Cart updateSoLuong={this.updateSoLuong} deleteCart={this.deleteCart} productCart={this.state.productCart} />
 
             </Fragment>
         )
