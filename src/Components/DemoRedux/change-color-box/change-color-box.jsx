@@ -2,7 +2,8 @@ import React, { Component } from "react";
 
 // kết nối tới redux
 import { connect } from "react-redux";
-
+import { ChangeColorBoxConst } from "../../../redux/reducers/change-color-box/change-color-box.const";
+import { changeColorCreator } from "../../../redux/reducers/change-color-box/change-color-box.creator";
 class ChangeColorBox extends Component {
   render() {
     const { changeColor } = this.props;
@@ -66,15 +67,13 @@ const mapStateToProps = (rootReducer) => {
 
 // Sau khi gọi hàm connect thì sẽ trả về cho dispatch cho mapDispatchToProps
 // dispatch: dùng để gửi action lên redux
+
 const mapDispatchToProps = (dispatch) => {
   return {
     changeColor: (color) => {
       console.log({ color });
       // 1. action
-      const action = {
-        type: "CHANGE_COLOR",
-        payload: color,
-      };
+      const action = changeColorCreator(color);
       // 2. dispatch
       dispatch(action);
     },
