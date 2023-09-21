@@ -16,12 +16,14 @@ import Component1 from "./Components/DemoRedux/component-1";
 // index: là file chỉ mục, luôn được tìm kiếm đầu tiên
 import CountRedux from "./Components/DemoRedux/count-redux";
 import ChangeColorBox from "./Components/DemoRedux/change-color-box/change-color-box";
+import GameXucXac from "./Components/DemoRedux/game-xuc-xac/game-xuc-xac";
 
 // App : component chính, component cha, chứa các component con
 function App() {
   return (
-    <div className="App container">
-      <ChangeColorBox />
+    <div>
+      <GameXucXac />
+      {/* <ChangeColorBox /> */}
       {/* <CountRedux /> */}
 
       {/* <Component1 /> */}
