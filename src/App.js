@@ -16,13 +16,22 @@ import Component1 from "./Components/DemoRedux/component-1";
 // index: là file chỉ mục, luôn được tìm kiếm đầu tiên
 import CountRedux from "./Components/DemoRedux/count-redux";
 import ChangeColorBox from "./Components/DemoRedux/change-color-box/change-color-box";
-import GameXucXac from "./Components/DemoRedux/game-xuc-xac/game-xuc-xac";
+
+/**
+ * Tại vì GameXucXac có import file global css ảnh hướng đến toàn bộ dự án
+ */
+// import GameXucXac from "./Components/DemoRedux/game-xuc-xac/game-xuc-xac";
+import ReactForm from "./Components/react-form/react-form";
+/**
+ * shift + alt + o: format (remove) lại những file import
+ */
 
 // App : component chính, component cha, chứa các component con
 function App() {
   return (
     <div>
-      <GameXucXac />
+      <ReactForm />
+      {/* <GameXucXac /> */}
       {/* <ChangeColorBox /> */}
       {/* <CountRedux /> */}
 
