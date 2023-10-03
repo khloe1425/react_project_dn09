@@ -22,6 +22,7 @@ import ChangeColorBox from "./Components/DemoRedux/change-color-box/change-color
  */
 // import GameXucXac from "./Components/DemoRedux/game-xuc-xac/game-xuc-xac";
 import ReactForm from "./Components/react-form/react-form";
+import LifeCycle from "./Components/life-cycle";
 /**
  * shift + alt + o: format (remove) lại những file import
  */
@@ -30,7 +31,8 @@ import ReactForm from "./Components/react-form/react-form";
 function App() {
   return (
     <div>
-      <ReactForm />
+      <LifeCycle />
+      {/* <ReactForm /> */}
       {/* <GameXucXac /> */}
       {/* <ChangeColorBox /> */}
       {/* <CountRedux /> */}

@@ -1,7 +1,9 @@
 import React, { Component } from "react";
-
-export default class ListSanPham extends Component {
+import { connect } from "react-redux";
+import { deleteCreator } from "../../../redux/reducers/react-form/react-form.action";
+class ListSanPham extends Component {
   render() {
+    console.log("listProduct", this.props.listProduct);
     return (
       <table className="table mt-4">
         <thead className="thead-dark">
@@ -16,29 +18,48 @@ export default class ListSanPham extends Component {
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <th scope="row">1</th>
-            <td>123</td>
-            <td>$123</td>
-            <td>
-              <img
-                alt=""
-                src="https://i.pravatar.cc?img=1"
-                style={{
-                  width: 50,
-                  height: 50,
-                }}
-              />
-            </td>
-            <td>Laptop</td>
-            <td>Lorem ipsum dolor</td>
-            <td>
-              <button>Edit</button>
-              <button className="mx-2">Delete</button>
-            </td>
-          </tr>
+          {this.props.listProduct.map((p) => {
+            return (
+              <tr>
+                <th scope="row">{p.id}</th>
+                <td>{p.productId}</td>
+                <td>${p.price}</td>
+                <td>
+                  <img
+                    alt=""
+                    src={p.image}
+                    style={{
+                      width: 50,
+                      height: 50,
+                    }}
+                  />
+                </td>
+                <td>{p.productType}</td>
+                <td>{p.productDesc}</td>
+                <td>
+                  <button>Edit</button>
+                  <button
+                    onClick={() => {
+                      this.props.dispatch(deleteCreator(p.id));
+                    }}
+                    className="mx-2"
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     );
   }
 }
+
+const mapStateToProps = (rootReducer) => {
+  return {
+    listProduct: rootReducer.reactFormReducer.listProduct,
+  };
+};
+
+export default connect(mapStateToProps)(ListSanPham);
