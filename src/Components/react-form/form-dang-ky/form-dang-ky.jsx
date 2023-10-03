@@ -1,12 +1,12 @@
 import React, { Component } from "react";
 import { flushSync } from "react-dom";
+import { connect } from "react-redux";
+import { submitCreator } from "../../../redux/reducers/react-form/react-form.action";
 /**
  * chiều thứ 1: nhập vào input và set lại state
  * chiều thứ 2: từ state đưa lại vào ô input
  */
-let a = 10;
-a = 20;
-export default class FormDangKy extends Component {
+class FormDangKy extends Component {
   state = {
     value: {
       id: "", // phải là số, không được bỏ trống
@@ -20,7 +20,7 @@ export default class FormDangKy extends Component {
     // lưu thêm giá trị error của các trường nhập vào
 
     error: {
-      id: "Phải là số", // phải là số
+      id: "", // phải là số
       productId: "", // phải là số
       price: "", // phải là số, giá trị từ 5 -> 100
       image: "", // phải là url
@@ -45,11 +45,12 @@ export default class FormDangKy extends Component {
     // Object.entries(this.state.value);
     const newError = { ...this.state.error };
 
-    const { value } = this.state;
+    const { value } = this.state; // cũ
 
     for (let prop in value) {
       switch (prop) {
-        case "id": {
+        case "id":
+        case "productId": {
           // nếu như không có lỗi nào thì reset về string rỗng.
           newError[prop] = "";
 
@@ -66,9 +67,55 @@ export default class FormDangKy extends Component {
 
           break;
         }
-        case "productId": {
+        case "price":
+          // nếu như không có lỗi nào thì reset về string rỗng.
+
+          // Điều kiện nào có ưu tiên lớn nhất thì chúng ta sẽ sắp xếp từ dưới lên trên.
+          newError[prop] = "";
+
+          // 3. có giá trị từ 5-> 100;
+          if (!(Number(value[prop]) <= 100 && Number(value[prop]) >= 5)) {
+            newError[prop] = "Price phải nằm trong khoảng từ 5 đến 100";
+          }
+
+          // 2. phải là số
+          const REGEX_NUMBER = /^\d+$/;
+          if (!REGEX_NUMBER.test(value[prop])) {
+            newError[prop] = "phải là số";
+          }
+
+          // 1. không được bỏ trống
+          if (value[prop].length === 0) {
+            newError[prop] = "không được bỏ trống";
+          }
+
+          break;
+        case "image": {
+          newError[prop] = "";
+
+          // 2. Phải là đường link url
+          const REGEX_URL =
+            /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/;
+          if (!REGEX_URL.test(value[prop])) {
+            newError[prop] = "Đường dẫn không hợp lệ.";
+          }
+
+          // 1. không được bỏ trống
+          if (value[prop].length === 0) {
+            newError[prop] = "không được bỏ trống";
+          }
           break;
         }
+        case "productType":
+          newError[prop] = "";
+
+          if (value[prop].length === 0) {
+            newError[prop] = "không được bỏ trống";
+          }
+          break;
+        case "productDesc":
+          // Không bắt buộc người dùng nhập vào.
+          break;
         default:
           break;
       }
@@ -77,6 +124,8 @@ export default class FormDangKy extends Component {
     this.setState({
       error: newError,
     });
+
+    return newError;
   };
 
   handleChange = (event) => {
@@ -88,6 +137,7 @@ export default class FormDangKy extends Component {
     // flushSync: giúp set state ngay lập tức, chuyển this.setState về cơ chế đồng bộ
     console.log("before ::: set state");
 
+    // cập nhật state value ngay lập tức trước khi gọi hàm handleValidate
     flushSync(() => {
       this.setState({
         // merge tất cả các state lại với nhau, không cần copy lại những state giá trị cũ
@@ -99,10 +149,7 @@ export default class FormDangKy extends Component {
       });
     });
 
-    console.log("after ::: set state");
-
     this.handleValidate();
-    console.log("after ::: handleValidate");
   };
 
   handleBlur = (event) => {
@@ -116,12 +163,33 @@ export default class FormDangKy extends Component {
         [name]: true,
       },
     });
+
+    this.handleValidate();
   };
 
   handleSubmit = (event) => {
     event.preventDefault();
 
-    alert(JSON.stringify(this.state));
+    this.setState({
+      touch: {
+        id: true,
+        productId: true,
+        price: true,
+        image: true,
+        productType: true,
+        productDesc: true,
+      },
+    });
+
+    const newError = this.handleValidate();
+
+    // kiểm tra nếu có 1 message error nào thì không cho submit
+    const ready = Object.values(newError).every((i) => i.length === 0);
+    if (ready === false) return;
+
+    // gửi lên redux
+    const action = submitCreator(this.state.value);
+    this.props.dispatch(action);
   };
 
   render() {
@@ -143,7 +211,9 @@ export default class FormDangKy extends Component {
               </label>
               <input
                 onBlur={this.handleBlur}
+                // đưa giá trị vào ô input
                 value={this.state.id}
+                // lấy giá trị từ input ra
                 onChange={this.handleChange}
                 name="id"
                 className="form-control"
@@ -166,6 +236,10 @@ export default class FormDangKy extends Component {
                 className="form-control"
                 id="product_id"
               />
+
+              {this.state.touch.productId && this.state.error.productId && (
+                <p className="text-danger">{this.state.error.productId}</p>
+              )}
             </div>
             <div className="mb-3">
               <label htmlFor="price" className="form-label">
@@ -180,6 +254,10 @@ export default class FormDangKy extends Component {
                 className="form-control"
                 id="price"
               />
+
+              {this.state.touch.price && this.state.error.price && (
+                <p className="text-danger">{this.state.error.price}</p>
+              )}
             </div>
           </div>
           <div className="col-6">
@@ -190,32 +268,52 @@ export default class FormDangKy extends Component {
               <input
                 onBlur={this.handleBlur}
                 onChange={this.handleChange}
+                value={this.state.value.image}
                 name="image"
                 type="text"
                 className="form-control"
                 id="image"
               />
+
+              {this.state.touch.image && this.state.error.image && (
+                <p className="text-danger">{this.state.error.image}</p>
+              )}
             </div>
             <div className="mb-3">
               <label htmlFor="product_type" className="form-label">
                 Product type
               </label>
-              <select className="custom-select">
+              <select
+                name="productType"
+                onChange={this.handleChange}
+                onBlur={this.handleBlur}
+                value={this.state.value.productType}
+                className="custom-select"
+              >
                 <option selected>Open this select menu</option>
                 <option value="1">Phone</option>
                 <option value="2">Tivi</option>
                 <option value="3">Laptop</option>
               </select>
+
+              {this.state.touch.productType && this.state.error.productType && (
+                <p className="text-danger">{this.state.error.productType}</p>
+              )}
             </div>
             <div className="mb-3">
               <label htmlFor="product_description" className="form-label">
                 Product description
               </label>
               <input
-                type="email"
+                name="productDesc"
+                onChange={this.handleChange}
+                onBlur={this.handleBlur}
+                value={this.state.value.productDesc}
                 className="form-control"
-                id="product_description"
               />
+              {this.state.touch.productDesc && this.state.error.productDesc && (
+                <p className="text-danger">{this.state.error.productDesc}</p>
+              )}
             </div>
           </div>
         </div>
@@ -226,3 +324,5 @@ export default class FormDangKy extends Component {
     );
   }
 }
+
+export default connect()(FormDangKy);

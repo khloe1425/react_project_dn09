@@ -1,6 +1,7 @@
 import { combineReducers, createStore } from "redux";
 import { changeColorBoxReducer } from "./reducers/change-color-box/change-color-box.reducer";
 import { gameXucXacReducer } from "./reducers/game-xux-xac/reducer";
+import { reactFormReducer } from "./reducers/react-form/react-form.reducer";
 /**
  * Reducer: nơi quản lý state, và logic
  * state = 10; 10 giá trị default của state
@@ -21,6 +22,7 @@ const rootReducer = combineReducers({
   },
   changeColorBoxReducer,
   gameXucXacReducer,
+  reactFormReducer,
 });
 
 export const store = createStore(
