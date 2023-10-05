@@ -1,11 +1,38 @@
 import React, { Component } from "react";
 import { flushSync } from "react-dom";
 import { connect } from "react-redux";
-import { submitCreator } from "../../../redux/reducers/react-form/react-form.action";
+import {
+  submitCreator,
+  updateCreator,
+} from "../../../redux/reducers/react-form/react-form.action";
 /**
  * chiều thứ 1: nhập vào input và set lại state
  * chiều thứ 2: từ state đưa lại vào ô input
  */
+
+class Animal {
+  // chỉ có class mới truy cập vào được method static
+  static print() {
+    console.log("print");
+    // console.log(this); ❌
+  }
+
+  hello() {
+    console.log("hello");
+    console.log(this); // Tượng trưng cho đối tượng - object - instance
+  }
+}
+
+// Abc.print;
+
+// object
+const dog = new Animal();
+dog.hello();
+// dog.print() ❌
+const cat = new Animal();
+cat.hello();
+// cat.print() ❌
+
 class FormDangKy extends Component {
   state = {
     value: {
@@ -49,7 +76,35 @@ class FormDangKy extends Component {
 
     for (let prop in value) {
       switch (prop) {
-        case "id":
+        case "id": {
+          // nếu như không có lỗi nào thì reset về string rỗng.
+          newError[prop] = "";
+
+          // 3. Check điều kiện ID là duy nhất.
+          // product.id: string | number
+          // value[prop]: string | number
+          const isExist = this.props.listProduct.find(
+            (product) => +product.id === Number(value[prop])
+          );
+          const isNotEdit = !this.props.productEdit;
+
+          if (isExist && isNotEdit) {
+            newError[prop] = "Id đã tồn tại.";
+          }
+
+          // 2. phải là số
+          const REGEX_NUMBER = /^\d+$/;
+          if (!REGEX_NUMBER.test(value[prop])) {
+            newError[prop] = "phải là số";
+          }
+
+          // 1. không được bỏ trống
+          if (value[prop].length === 0) {
+            newError[prop] = "không được bỏ trống";
+          }
+
+          break;
+        }
         case "productId": {
           // nếu như không có lỗi nào thì reset về string rỗng.
           newError[prop] = "";
@@ -188,13 +243,58 @@ class FormDangKy extends Component {
     if (ready === false) return;
 
     // gửi lên redux
-    const action = submitCreator(this.state.value);
+    const action = this.props.productEdit
+      ? updateCreator(this.state.value)
+      : submitCreator(this.state.value);
+
     this.props.dispatch(action);
+
+    this.setState({
+      value: {
+        id: "",
+        productId: "",
+        price: "",
+        image: "",
+        productType: "",
+        productDesc: "",
+      },
+      touch: {
+        id: false,
+        productId: false,
+        price: false,
+        image: false,
+        productType: false,
+        productDesc: false,
+      },
+    });
   };
+
+  static getDerivedStateFromProps(newProps, currentState) {
+    // console.log(this.props); // ❌
+
+    console.log({
+      newProps,
+      currentState,
+    });
+
+    // Chỉ cập nhật state khi productEdit có giá trị
+    if (newProps.productEdit !== null) {
+      // Lấy giá trị props.productEdit cập nhật 1 lần trước đó rồi.
+      // Lần sau chúng ta sẽ không cần cập nhật lại nữa
+      if (newProps.productEdit.id !== currentState.value.id)
+        return {
+          value: newProps.productEdit,
+        };
+    }
+
+    // không cập nhật lại state
+    return null;
+  }
 
   render() {
     // console.log(this.state);
-    console.log("render");
+    // console.log("render");
+    console.log({ props: this.props });
     return (
       <form
         onSubmit={this.handleSubmit}
@@ -212,9 +312,11 @@ class FormDangKy extends Component {
               <input
                 onBlur={this.handleBlur}
                 // đưa giá trị vào ô input
-                value={this.state.id}
+                value={this.state.value.id}
                 // lấy giá trị từ input ra
                 onChange={this.handleChange}
+                // Không cho chỉnh sửa nên nhấn edit sản phẩm
+                disabled={this.props.productEdit}
                 name="id"
                 className="form-control"
                 id="id"
@@ -230,7 +332,7 @@ class FormDangKy extends Component {
               </label>
               <input
                 onBlur={this.handleBlur}
-                value={this.state.productId}
+                value={this.state.value.productId}
                 name="productId"
                 onChange={this.handleChange}
                 className="form-control"
@@ -248,7 +350,7 @@ class FormDangKy extends Component {
               <input
                 onBlur={this.handleBlur}
                 onChange={this.handleChange}
-                value={this.state.price}
+                value={this.state.value.price}
                 name="price"
                 type="text"
                 className="form-control"
@@ -318,11 +420,18 @@ class FormDangKy extends Component {
           </div>
         </div>
         <button type="submit" className="btn btn-primary">
-          Submit
+          {this.props.productEdit ? "Update" : "Submit"}
         </button>
       </form>
     );
   }
 }
 
-export default connect()(FormDangKy);
+const mapStateToProps = (rootReducer) => {
+  return {
+    listProduct: rootReducer.reactFormReducer.listProduct,
+    productEdit: rootReducer.reactFormReducer.productEdit,
+  };
+};
+
+export default connect(mapStateToProps)(FormDangKy);

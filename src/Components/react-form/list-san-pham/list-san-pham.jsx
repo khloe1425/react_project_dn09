@@ -1,6 +1,9 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { deleteCreator } from "../../../redux/reducers/react-form/react-form.action";
+import {
+  deleteCreator,
+  editCreator,
+} from "../../../redux/reducers/react-form/react-form.action";
 class ListSanPham extends Component {
   render() {
     console.log("listProduct", this.props.listProduct);
@@ -37,7 +40,13 @@ class ListSanPham extends Component {
                 <td>{p.productType}</td>
                 <td>{p.productDesc}</td>
                 <td>
-                  <button>Edit</button>
+                  <button
+                    onClick={() => {
+                      this.props.dispatch(editCreator(p));
+                    }}
+                  >
+                    Edit
+                  </button>
                   <button
                     onClick={() => {
                       this.props.dispatch(deleteCreator(p.id));

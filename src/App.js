@@ -31,8 +31,8 @@ import LifeCycle from "./Components/life-cycle";
 function App() {
   return (
     <div>
-      <LifeCycle />
-      {/* <ReactForm /> */}
+      {/* <LifeCycle /> */}
+      <ReactForm />
       {/* <GameXucXac /> */}
       {/* <ChangeColorBox /> */}
       {/* <CountRedux /> */}

@@ -2,6 +2,7 @@ import { ReactFormConst } from "./react-form.const";
 
 const stateDefault = {
   listProduct: [], // 0x111111111
+  productEdit: null,
 }; // 0xaaaaaaaa
 
 // ...: spread operator
@@ -36,7 +37,22 @@ export const reactFormReducer = (state = stateDefault, action) => {
       return { ...state };
     }
     case ReactFormConst.Edit:
-      return state;
+      state.productEdit = action.payload;
+      return { ...state };
+
+    case ReactFormConst.Update: {
+      const newListProduct = [...state.listProduct];
+      const index = state.listProduct.findIndex(
+        (p) => p.id === action.payload.id
+      );
+
+      newListProduct.splice(index, 1, action.payload);
+
+      state.listProduct = newListProduct;
+      state.productEdit = null;
+
+      return { ...state };
+    }
     default:
       return state;
   }

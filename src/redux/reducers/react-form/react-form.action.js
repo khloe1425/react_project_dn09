@@ -5,6 +5,11 @@ export const submitCreator = (payload) => ({
   payload,
 });
 
+export const updateCreator = (payload) => ({
+  type: ReactFormConst.Update,
+  payload,
+});
+
 export const deleteCreator = (payload) => ({
   type: ReactFormConst.Delete,
   payload,
